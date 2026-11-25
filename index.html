@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Materiales SAP – Plan Infra</title>
+  <meta name="theme-color" content="#0B2545">
+  <meta name="robots" content="noindex">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Materiales">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="barra">
+    <div class="logo" aria-hidden="true">MS</div>
+    <div class="marca"><b>MATERIALES SAP</b><span>PLAN INFRA · TÉCNICOS</span></div>
+    <span id="conexion" class="conexion">EN LÍNEA</span>
+  </header>
+  <button id="sync" class="sync oculto" type="button"></button>
+
+  <main>
+    <!-- Ingreso -->
+    <section id="v-login" class="vista" hidden>
+      <form id="f-login" class="tarjeta" autocomplete="off" novalidate>
+        <h1>Ingreso</h1>
+        <p class="nota">Usa tu <b>usuario de Plan Infra</b> y tu <b>código móvil</b>. La primera vez, el código de activación que te entregó el supervisor.</p>
+        <div class="campo">
+          <label for="l-usuario">Usuario</label>
+          <input id="l-usuario" type="text" maxlength="40" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="username" required>
+        </div>
+        <div class="campo">
+          <label for="l-codigo">Código</label>
+          <input id="l-codigo" type="password" maxlength="64" autocomplete="current-password" required>
+        </div>
+        <button class="boton" type="submit">INGRESAR</button>
+        <div id="l-estado" class="estado"></div>
+      </form>
+    </section>
+
+    <!-- Definir código personal (primer ingreso con código de activación) -->
+    <section id="v-definir" class="vista" hidden>
+      <form id="f-definir" class="tarjeta" autocomplete="off" novalidate>
+        <h1>Define tu código personal</h1>
+        <p class="nota">Ingresaste con el código de activación. Elige ahora tu código personal (mínimo 6 caracteres). No lo compartas.</p>
+        <div class="campo"><label for="d-nuevo">Código nuevo</label><input id="d-nuevo" type="password" minlength="6" maxlength="64" autocomplete="new-password" required></div>
+        <div class="campo"><label for="d-repetir">Repetir código</label><input id="d-repetir" type="password" minlength="6" maxlength="64" autocomplete="new-password" required></div>
+        <button class="boton" type="submit">GUARDAR CÓDIGO</button>
+        <div id="d-estado" class="estado"></div>
+      </form>
+    </section>
+
+    <!-- Inicio -->
+    <section id="v-inicio" class="vista" hidden>
+      <p class="saludo">Hola, <b id="i-nombre"></b></p>
+      <p id="i-catalogo" class="nota"></p>
+      <div id="i-plantas" class="menu"></div>
+      <div class="menu">
+        <button class="mbtn sec" data-ir="historial" type="button"><span class="ico">☰</span>Mi historial</button>
+        <button class="mbtn sec" data-ir="pendientes" type="button"><span class="ico">⟳</span>Pendientes <b id="i-pend"></b></button>
+        <button class="mbtn sec" data-ir="cuenta" type="button"><span class="ico">⚿</span>Mi cuenta</button>
+        <button class="mbtn sec" id="b-actualizar" type="button"><span class="ico">↻</span>Actualizar datos</button>
+      </div>
+      <button id="b-salir" class="boton secundario" type="button">Cerrar sesión</button>
+    </section>
+
+    <!-- Registro de materiales -->
+    <section id="v-form" class="vista" hidden>
+      <button class="volver" data-ir="inicio" type="button">‹ Inicio</button>
+      <form id="f-reg" class="tarjeta" novalidate autocomplete="off">
+        <h1 id="r-titulo">Registrar materiales</h1>
+        <div class="campo">
+          <label>OT semanal</label>
+          <div id="r-ot" class="caja"></div>
+        </div>
+        <div class="campo">
+          <label for="r-tag-q">TAG</label>
+          <div id="r-tag-buscar">
+            <input id="r-tag-q" type="search" maxlength="80" placeholder="N° de TAG o parte de la descripción" autocomplete="off">
+            <div id="r-tag-res"></div>
+          </div>
+          <div id="r-tag-ficha" class="caja oculto"></div>
+        </div>
+        <fieldset class="grupo">
+          <legend>Materiales</legend>
+          <div class="fila2">
+            <div class="campo"><label for="m-codigo">Código SAP</label><input id="m-codigo" maxlength="40" autocapitalize="characters" autocomplete="off"></div>
+            <div class="campo"><label for="m-cant">Cantidad</label><input id="m-cant" inputmode="decimal" autocomplete="off"></div>
+          </div>
+          <div class="campo"><label for="m-desc">Descripción</label><input id="m-desc" maxlength="200" autocomplete="off"></div>
+          <div class="fila2">
+            <div class="campo"><label for="m-uni">Unidad</label><input id="m-uni" maxlength="10" list="unidades" value="UN" autocapitalize="characters" autocomplete="off"><datalist id="unidades"></datalist></div>
+            <div class="campo"><label for="m-obs">Observación</label><input id="m-obs" maxlength="300" autocomplete="off"></div>
+          </div>
+          <button id="m-agregar" class="boton secundario" type="button">+ AGREGAR MATERIAL</button>
+          <span id="m-error" class="aviso oculto"></span>
+          <div id="m-lista"></div>
+          <span class="ayuda">Puedes repetir un mismo material: cada línea se guarda por separado.</span>
+        </fieldset>
+        <div class="campo">
+          <label for="r-obs">Observación general</label>
+          <textarea id="r-obs" maxlength="500"></textarea>
+        </div>
+        <button id="r-enviar" class="boton" type="submit">ENVIAR SOLICITUD DE MATERIALES</button>
+        <div id="r-estado" class="estado"></div>
+      </form>
+    </section>
+
+    <!-- Detalle / comprobante de una solicitud -->
+    <section id="v-detalle" class="vista" hidden>
+      <button class="volver" data-ir="historial" type="button">‹ Mi historial</button>
+      <div id="dt-cont" class="tarjeta"></div>
+    </section>
+
+    <!-- Historial -->
+    <section id="v-historial" class="vista" hidden>
+      <button class="volver" data-ir="inicio" type="button">‹ Inicio</button>
+      <h1>Mi historial</h1>
+      <p class="nota">Tus solicitudes y su estado: recibida por Google, importada en Plan Infra (con su comprobante) y, después, su carga en SAP.</p>
+      <div id="h-estado" class="estado"></div>
+      <div id="h-lista"></div>
+    </section>
+
+    <!-- Pendientes -->
+    <section id="v-pendientes" class="vista" hidden>
+      <button class="volver" data-ir="inicio" type="button">‹ Inicio</button>
+      <h1>Pendientes en este teléfono</h1>
+      <div id="p-lista"></div>
+      <button id="p-sync" class="boton" type="button">REINTENTAR ENVÍO</button>
+    </section>
+
+    <!-- Cuenta -->
+    <section id="v-cuenta" class="vista" hidden>
+      <button class="volver" data-ir="inicio" type="button">‹ Inicio</button>
+      <form id="f-cuenta" class="tarjeta" autocomplete="off" novalidate>
+        <h1>Cambiar código móvil</h1>
+        <div class="campo"><label for="c-actual">Código actual</label><input id="c-actual" type="password" maxlength="64" autocomplete="current-password" required></div>
+        <div class="campo"><label for="c-nuevo">Código nuevo</label><input id="c-nuevo" type="password" minlength="6" maxlength="64" autocomplete="new-password" required></div>
+        <button class="boton" type="submit">CAMBIAR CÓDIGO</button>
+        <div id="c-estado" class="estado"></div>
+      </form>
+      <p class="nota">¿Olvidaste tu código? Pide al supervisor un código de activación nuevo en Plan Infra.</p>
+    </section>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
