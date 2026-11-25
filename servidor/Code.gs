@@ -51,6 +51,15 @@ function configurar() {
   Logger.log('Define la propiedad de script PLANINFRA_CLAVE (≥ 24 caracteres) = MAT_GAS_CLAVE del .env de Plan Infra.');
 }
 
+/** Genera (o rota) la clave compartida con Plan Infra DENTRO de Google y la guarda en PLANINFRA_CLAVE.
+ *  Ejecutar desde el editor; copiar el valor del registro de ejecución a MAT_GAS_CLAVE del .env de Plan Infra.
+ *  Evita tener que pegar la clave a mano en las propiedades del script. */
+function generarClavePlanInfra() {
+  const c = Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, '').slice(0, 16);
+  PropertiesService.getScriptProperties().setProperty('PLANINFRA_CLAVE', c);
+  Logger.log('MAT_GAS_CLAVE=' + c);
+}
+
 function asegurar_(ss, nombre, enc) {
   let sh = ss.getSheetByName(nombre);
   if (!sh) sh = ss.insertSheet(nombre);
